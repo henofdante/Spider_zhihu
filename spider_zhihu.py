@@ -2,11 +2,12 @@
 
 __author__ = 'HenofDante'
 
+from IPython import start_ipython
 from zhihu import ZhihuClient
 import os.path
 import os
 import json
-import copy
+
 import time
 import threading
 from io import StringIO
@@ -32,8 +33,9 @@ def sample_code():
     print('followee number:', me.followee_num)
     print('follower number:', me.follower_num)
 
-    for i in range(1000):
-        print(me.motto)
+    start_ipython()
+
+
     followees = []
     followers = []
     for man in me.followees:
@@ -43,9 +45,11 @@ def sample_code():
     for man in me.followers:
         print(man.id, '/', man.name)
         followers.append(man.id)
+    print(followees)
+    print(followers)
 
-    save = ZhihuUser(me.id, followees, followers)
-    save.save('save.json')
+    # save = ZhihuUser(me.id, followees, followers)
+    # save.save('save.json')
 
 
 def multi_threading(max_threading, sleep_time, function):
@@ -96,23 +100,23 @@ class ZhihuUser:
         # print('saved')
 
 
-class ZhihuUserSet:
+# class ZhihuUserSet:
 
-    def __init__(self, init_user=None):
-        self.userset = {}
-        if init_user != None:
-            self.append(init_user)
+#     def __init__(self, init_user=None):
+#         self.userset = {}
+#         if init_user != None:
+#             self.append(init_user)
 
-    def append(self, user):
-        if isinstance(user, ZhihuUser):
-            if self.userset.get(user.id) != None:
-                self.userset[user.id] = copy.copy(user)
-                del self.userset[user.id].id
-                return 0  # 正常
-            else:
-                return 1  # 错误
-        else:
-            raise TypeError
+#     def append(self, user):
+#         if isinstance(user, ZhihuUser):
+#             if self.userset.get(user.id) != None:
+#                 self.userset[user.id] = copy.copy(user)
+#                 del self.userset[user.id].id
+#                 return 0  # 正常
+#             else:
+#                 return 1  # 错误
+#         else:
+#             raise TypeError
 
 class Quit(BaseException):
     pass
@@ -335,8 +339,11 @@ class ZhihuSpider:
 # END <class zhihu_spider>
 
 
-if __name__ == '__main__':
-    spider = ZhihuSpider('cookie.json')
-    #spider.spider_collect_user('liu-shi-qi-5-21', 'from-me.json', 100)
-    spider.load_file()
-    spider.collect_user()
+# if __name__ == '__main__':
+#     spider = ZhihuSpider('cookie.json')
+#     #spider.spider_collect_user('liu-shi-qi-5-21', 'from-me.json', 100)
+#     spider.load_file()
+#     spider.collect_user()
+
+
+sample_code()

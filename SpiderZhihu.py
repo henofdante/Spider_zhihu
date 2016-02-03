@@ -8,7 +8,7 @@ class Spider:
         '''
 
         '''
-        pass
+
 
     def login(self):
         '''
@@ -23,9 +23,20 @@ class Spider:
     def _downloadUser(self):
         '''
         下载单个用户线程，循环从队列中取用户，并向队列中加入下载的用户
+        下载后加入缓存等待写入硬盘
         '''
 
     def displayStatus(self):
         '''
         输出循环，显示下载状态
+        '''
+
+    def load(self):
+        '''
+        读取工作进程
+        '''
+
+    def save(self):jmhdhgbujgjhggjh
+        '''
+        保存工作进程
         '''
