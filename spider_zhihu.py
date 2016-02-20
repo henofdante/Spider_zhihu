@@ -33,9 +33,6 @@ def sample_code():
     print('followee number:', me.followee_num)
     print('follower number:', me.follower_num)
 
-    start_ipython()
-
-
     followees = []
     followers = []
     for man in me.followees:
