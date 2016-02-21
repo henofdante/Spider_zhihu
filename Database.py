@@ -35,6 +35,7 @@ class Database:
 
     def getUid(self, name):
         '''返回指定用户名的uid，不存在返回None'''
+        return self.tree.search(name)
 
     def setUser(self, user):
         '''将指定user存到文件中'''
@@ -53,7 +54,15 @@ class Database:
         return self.path + str(uid / 1000)
 
     def _initTree(self):
-        pass
+        '构建姓名查找树'
+        i = 0
+        while os.path.exists(self._filePath(i)):
+            with open(self._filePath(i), 'r') as file:
+                lines = file.readlines()
+            # 取名字
+            for uid, name in [(x[0], x[1]) for x in map(' '.split, lines)]:
+                self.tree.set(name, uid)
+            i += 1
 
 
 class DicTree:
@@ -69,11 +78,9 @@ class DicTree:
         self.root = self._node(None)
 
     def search(self, name):
-        
         node = self.root
         index = 0
         while index != len(name):
-
             if node.children.has_key(name[index]):
                 node = node.children[name[index]]
                 index += 1
@@ -82,4 +89,13 @@ class DicTree:
         return node.data
 
     def set(self, name, data):
-        pass
+        node = self.root
+        index = 0
+        while index != len(name):
+            # 没有则创建
+            if not node.children.has_key(name[index]):
+                node.children[name[index]] = self._node()
+
+            node = node.children[name[index]]
+            index += 1
+        node.data = data
