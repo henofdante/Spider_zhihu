@@ -2,14 +2,17 @@
 # queue
 
 import queue
+from Database   import Database
+from User       import User
 
 class UnlimitedQueueWorks:
 
     def __init__(self):
         self.queue = queue.Queue()
 
-    def push(self, obj):
-        self.queue.put(obj)
+    def push(self, user, database):
+        self.queue.put(user)
+        database.saveUser(User(user=user))
 
     def pop(self):
         return self.queue.get()

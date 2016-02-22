@@ -2,7 +2,6 @@
 #rebuild spider
 import os
 
-from IPython                import start_ipython
 from zhihu                  import ZhihuClient
 from threading              import Thread
 
@@ -90,15 +89,8 @@ class Spider:
         输出循环，显示下载状态
         '''
 
-    def load(self):
-        '''
-        读取工作进程
-        '''
-
-    def save(self):
-        '''
-        保存工作进程
-        '''
 
 
-start_ipython()
+spider = Spider()
+spider.login()
+spider.mainLoop()
