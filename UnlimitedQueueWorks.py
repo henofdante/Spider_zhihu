@@ -15,30 +15,34 @@ class UnlimitedQueueWorks:
         self.database = database
         self.uidcounter = database.checkLatest()
         self.uidLock = threading.Lock()
-        for user in database.checkIntegrity():
-            print(BASIC_ADRESS + user.id, ':')
-            temp = client.author(BASIC_ADRESS + user.id)
-            temp.uid = user.uid
-            print(temp.name)
-            self.queue.put(temp)
+
+        # 从硬盘恢复队列
+        # for user in database.checkIntegrity():
+        #     print(BASIC_ADRESS + user.id, ':')
+        #     temp = client.author(BASIC_ADRESS + user.id)
+        #     temp.uid = user.uid
+        #     self.queue.put(temp)
 
     def push(self, user):
-        if self.database.getUid(user.id) == None:
-            
-            with self.uidLock:
-                self.uidcounter += 1
-                user.uid = self.uidcounter
-            self.database.saveUser(User(user=user))
-            self.queue.put(user)
-            print(len(self.queue))
-            
-        
+
+        # 分配uid
+        if not hasattr(user, 'uid'):
+            uid = self.database.getUid(user.id)
+            if uid == None:
+
+                with self.uidLock:
+                    self.uidcounter += 1
+                    user.uid = self.uidcounter
+                self.database.saveUser(User(user.uid, user.id, followee_num=1))
+            else:
+                user.uid = uid
+
+        self.queue.put(user)
+        # print('UQW.push, self.queue.qsize():', self.queue.qsize())
+        print('.', end='')
 
     def pop(self):
         return self.queue.get()
 
     def isEmpty(self):
-        if 0 == len(self.queue):
-            return True
-        else:
-            return False
+        return self.queue.empty()

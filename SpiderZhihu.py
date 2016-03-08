@@ -23,8 +23,8 @@ class Spider:
         self.login()
         # 队列对象
         self.queue = UnlimitedQueueWorks(self.database, self.client)
-        # 运行状态
-        self.onRunning = True
+        # # 运行状态
+        # self.onRunning = True
 
     def login(self, cookie='cookie.json'):
         '''
@@ -46,6 +46,24 @@ class Spider:
         print('id:', me.id)
         print('name:', me.name)
         print('motto:', me.motto)
+
+    def resumeQueue(self):
+        # 从硬盘恢复队列
+
+        print('恢复队列')
+        for user in self.database.checkIntegrity():
+            temp = self.client.author(BASIC_ADRESS + user.id)
+            temp.uid = user.uid
+            # while True:
+            #     try:
+            #         print('try to connect, name:', temp.name)
+            #         break
+            #     except Exception as e:
+            #         temp = self.client.author(BASIC_ADRESS + user.id)
+            #         print('rebuit:', e)
+            self.queue.push(temp)
+        print('恢复队列完成:', )
+
 
     def mainLoop(self, poolSize):
         """
@@ -70,7 +88,7 @@ class Spider:
         下载单个用户线程，循环从队列中取用户，并向队列中加入下载的用户
         下载后加入缓存等待写入硬盘
         '''
-        while self.onRunning:
+        while True:
             currentUser = self.queue.pop()
             cnt = 0
 
@@ -81,8 +99,9 @@ class Spider:
                 for newUser in currentUser.followees:
                     userList.append(newUser)
                     cnt += 1
-            except AttributeError:
-                print('下载失败,', currentUser)
+            except Exception as e:
+                print('下载失败,', e)
+                continue
 
 
             # 验证
@@ -96,8 +115,8 @@ class Spider:
                 print('重入队,', 'uid:', currentUser.uid, 'id:', currentUser.id, 'num', currentUser.followee_num, 'cnt:', cnt)
 
             # 入队
-            for user in userList:
-                self.queue.push(user)
+            # for user in userList:
+            #     self.queue.push(user)
 
 
 
@@ -112,4 +131,6 @@ class Spider:
 spider = Spider()
 spider.login()
 spider.test()
+resumer = Thread()
+spider.resumeQueue()
 spider.mainLoop(20)
